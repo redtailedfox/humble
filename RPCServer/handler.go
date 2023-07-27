@@ -14,5 +14,5 @@ type EchoImpl struct{}
 func (s *EchoImpl) Call(ctx context.Context, req *api.Request) (resp *api.Response, err error) {
 	fmt.Println(resp)
 	fmt.Println(req)
-	return &api.Response{Message: "hello, hong wei"}, nil
+	return &api.Response{Message: "i love orbital"}, nil
 }
