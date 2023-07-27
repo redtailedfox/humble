@@ -32,8 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//svr := genericserver.NewServer(new(GenericServiceImpl), g)
-	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8888+2))
+	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8894))
 	svr := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr), server.WithRegistry(r))
 	if err != nil {
 		panic(err)
@@ -43,33 +42,26 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//for i := 0; i < 3; i++ { // adjust the number of instances as needed
-	//	go func(i int) {
-	//		addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf("hellorpc:%d", 8888+i))
-	//		if err != nil {
-	//			log.Fatalf("Failed to resolve server address: %v", err)
-	//		}
-	//
-	//		svr := genericserver.NewServer(
-	//			new(GenericServiceImpl),
-	//			g,
-	//			server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "Call"}),
-	//			server.WithServiceAddr(addr),
-	//			server.WithRegistry(r),
-	//		)
-	//
-	//		if err != nil {
-	//			panic(err)
-	//		}
-	//
-	//		err = svr.Run()
-	//		if err != nil {
-	//			panic(err)
-	//		}
-	//	}(i)
-	//}
+	addr2, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8895))
+	svr2 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr2), server.WithRegistry(r))
+	if err != nil {
+		panic(err)
+	}
 
-	// resp is a JSON string
+	err = svr2.Run()
+	if err != nil {
+		panic(err)
+	}
+	addr3, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8896))
+	svr3 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr3), server.WithRegistry(r))
+	if err != nil {
+		panic(err)
+	}
+
+	err = svr3.Run()
+	if err != nil {
+		panic(err)
+	}
 }
 
 type GenericServiceImpl struct {

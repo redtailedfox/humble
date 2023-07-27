@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/cloudwego/kitex/pkg/loadbalance"
 	"log"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -69,29 +68,13 @@ func makeThriftCall(IDLPath string, service string, jsonData map[string]interfac
 		log.Fatal(err)
 	}
 
-	cli, err := genericclient.NewClient(service, g, client.WithResolver(r), client.WithLoadBalancer(loadbalance.NewWeightedRoundRobinBalancer()))
+	cli, err := genericclient.NewClient(service, g, client.WithResolver(r))
 
 	if err != nil {
 		return 0, errors.New(("invalid client name"))
 	}
 
-	// req, err := http.NewRequest(http.MethodGet, requestURL, bytes.NewBuffer(response))
-	// req.Header.Set("token", "1")
-	// if err != nil {
-	// 	fmt.Println("error construting req")
-	// 	return 0, err
-	// }
-
 	jsonString, _ := json.Marshal(jsonData)
-
-	// customReq, err := generic.FromHTTPRequest(req)
-
-	// if err != nil {
-	// 	fmt.Println("error constructing xcustom req")
-	// 	return 0, err
-	// }
-
-	// fmt.Println(customReq)
 
 	resp, err := cli.GenericCall(ctx, service, string(jsonString))
 
