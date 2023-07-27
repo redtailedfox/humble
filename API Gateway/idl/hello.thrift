@@ -20,3 +20,11 @@ service thriftCall {
 service concat {
     Response concat(1: concatreq req) (api.post = "/concat")
 }
+
+service encrypt {
+    Response encrypt(1: Request req) (api.post = "/encrypt")
+}
+
+service decrypt {
+    Response decrypt(1: Request req) (api.post = "/decrypt")
+}

@@ -20,3 +20,13 @@ func _concatMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _encryptMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _decryptMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

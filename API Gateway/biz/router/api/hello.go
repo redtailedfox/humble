@@ -18,5 +18,7 @@ func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	root.POST("/concat", append(_concatMw(), api.Concat)...)
+	root.POST("/decrypt", append(_decryptMw(), api.Decrypt)...)
+	root.POST("/encrypt", append(_encryptMw(), api.Encrypt)...)
 	root.POST("/post", append(_callMw(), api.Call)...)
 }
