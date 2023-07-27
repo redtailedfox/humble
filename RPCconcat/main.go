@@ -37,27 +37,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//addr2, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8892))
-	//svr2 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "concat"}), server.WithServiceAddr(addr2), server.WithRegistry(r))
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//err = svr2.Run()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//addr3, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8893))
-	//svr3 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "concat"}), server.WithServiceAddr(addr3), server.WithRegistry(r))
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//err = svr3.Run()
-	//if err != nil {
-	//	panic(err)
-	//}
-
 }
 
 type GenericServiceImpl struct {
@@ -73,24 +52,17 @@ func (g *GenericServiceImpl) GenericCall(ctx context.Context, method string, req
 		return
 	}
 
-	fmt.Println(m)
-	fmt.Println(jsonRequest)
-
 	first, ok := jsonRequest["message1"].(string)
 	if !ok {
-		fmt.Println("data provided is not a string")
+		fmt.Println("wrong type")
 	}
 
 	second, ok := jsonRequest["message2"].(string)
 	if !ok {
-		fmt.Println("data provided is not a string")
+		fmt.Println("wrong type")
 	}
 
-	fmt.Println(first + second)
-
 	jsonRequest["message"] = first + second
-
-	// var respMap map[string]interface{}
 
 	jsonResponse, err := json.Marshal(jsonRequest)
 	if err != nil {
@@ -98,7 +70,6 @@ func (g *GenericServiceImpl) GenericCall(ctx context.Context, method string, req
 	}
 
 	fmt.Println(string(jsonResponse))
-	// fmt.Println(respMap)
 
 	return string(jsonResponse), nil
 }

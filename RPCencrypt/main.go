@@ -106,15 +106,11 @@ func (g *GenericServiceImpl) GenericCall(ctx context.Context, method string, req
 		return
 	}
 
-	fmt.Println(m)
-	fmt.Println(jsonRequest)
-
 	dataValue, ok := jsonRequest["message"].(string)
 	if !ok {
-		fmt.Println("data provided is not a string")
+		fmt.Println("wrong type")
 		return
 	}
-	fmt.Println(dataValue)
 
 	encodedText := base64.StdEncoding.EncodeToString([]byte(dataValue))
 	encodedText = base64.StdEncoding.EncodeToString([]byte(encodedText))
@@ -128,15 +124,12 @@ func (g *GenericServiceImpl) GenericCall(ctx context.Context, method string, req
 
 	jsonRequest["message"] = encodedText
 
-	// var respMap map[string]interface{}
-
 	jsonResponse, err := json.Marshal(jsonRequest)
 	if err != nil {
 		return nil, err
 	}
 
 	fmt.Println(string(jsonResponse))
-	// fmt.Println(respMap)
 
 	return string(jsonResponse), nil
 }
