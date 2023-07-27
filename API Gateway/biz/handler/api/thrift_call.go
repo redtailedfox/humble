@@ -39,7 +39,7 @@ func Call(ctx context.Context, c *app.RequestContext) {
 
 	fmt.Println(jsonData)
 
-	responseFromRPC, err := makeThriftCall(IDLPATH, jsonData, requestURL, ctx)
+	responseFromRPC, err := makeThriftCall(IDLPATH, "Call", jsonData, requestURL, ctx)
 
 	if err != nil {
 		fmt.Println(err)
@@ -52,7 +52,7 @@ func Call(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, responseFromRPC)
 }
 
-func makeThriftCall(IDLPath string, jsonData map[string]interface{}, requestURL string, ctx context.Context) (interface{}, error) {
+func makeThriftCall(IDLPath string, service string, jsonData map[string]interface{}, requestURL string, ctx context.Context) (interface{}, error) {
 	p, err := generic.NewThriftFileProvider(IDLPath)
 	if err != nil {
 		fmt.Println("error creating thrift file provider")
@@ -69,7 +69,7 @@ func makeThriftCall(IDLPath string, jsonData map[string]interface{}, requestURL 
 		log.Fatal(err)
 	}
 
-	cli, err := genericclient.NewClient("Call", g, client.WithResolver(r), client.WithLoadBalancer(loadbalance.NewWeightedRoundRobinBalancer()))
+	cli, err := genericclient.NewClient(service, g, client.WithResolver(r), client.WithLoadBalancer(loadbalance.NewWeightedRoundRobinBalancer()))
 
 	if err != nil {
 		return 0, errors.New(("invalid client name"))
@@ -93,7 +93,7 @@ func makeThriftCall(IDLPath string, jsonData map[string]interface{}, requestURL 
 
 	// fmt.Println(customReq)
 
-	resp, err := cli.GenericCall(ctx, "call", string(jsonString))
+	resp, err := cli.GenericCall(ctx, service, string(jsonString))
 
 	if err != nil {
 		fmt.Println("error making generic call")

@@ -15,3 +15,8 @@ func _callMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _concatMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
