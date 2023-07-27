@@ -9,6 +9,7 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	"net"
 )
 
 func main() {
@@ -27,7 +28,8 @@ func main() {
 		panic(err)
 	}
 	//svr := genericserver.NewServer(new(GenericServiceImpl), g)
-	svr := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "Call"}), server.WithRegistry(r))
+	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8888+1))
+	svr := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "call"}), server.WithServiceAddr(addr), server.WithRegistry(r))
 	if err != nil {
 		panic(err)
 	}

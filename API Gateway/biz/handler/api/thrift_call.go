@@ -23,7 +23,7 @@ import (
 func Call(ctx context.Context, c *app.RequestContext) {
 	//url to sendreq?
 	var requestURL string = "http://example.com/life/client/11?vint64=1&items=item0,item1,item2"
-	var IDLPATH string = "idl/hello.thrift"
+	var IDLPATH string = "idl/call.thrift"
 	var jsonData map[string]interface{}
 
 	//return data in bytes
@@ -39,7 +39,7 @@ func Call(ctx context.Context, c *app.RequestContext) {
 
 	fmt.Println(jsonData)
 
-	responseFromRPC, err := makeThriftCall(IDLPATH, "Call", jsonData, requestURL, ctx)
+	responseFromRPC, err := makeThriftCall(IDLPATH, "call", jsonData, requestURL, ctx)
 
 	if err != nil {
 		fmt.Println(err)

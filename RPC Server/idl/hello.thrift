@@ -8,6 +8,6 @@ struct Response {
 	1: string message
 }
 
-service Echo {
+service call {
     Response call(1: Request req)
 }
