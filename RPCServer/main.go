@@ -41,7 +41,7 @@ func main() {
 	//svr2 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "call"}), server.WithServiceAddr(addr2), server.WithRegistry(r))
 	//if err != nil {
 	//	panic(err)
-	//}
+	//}/
 	//
 	//err = svr2.Run()
 	//if err != nil {

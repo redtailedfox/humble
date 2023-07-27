@@ -21,47 +21,46 @@ import (
 // Call .
 // @router /post [POST]
 func Call(ctx context.Context, c *app.RequestContext) {
-	//url to sendreq?
+
 	var requestURL string = "http://example.com/life/client/11?vint64=1&items=item0,item1,item2"
 	var IDLPATH string = "idl/call.thrift"
 	var jsonData map[string]interface{}
 
-	//return data in bytes
 	response := c.GetRawData()
 
 	err := json.Unmarshal(response, &jsonData)
 
 	if err != nil {
 		fmt.Println("Error", err)
-		c.String(consts.StatusBadRequest, "bad post request")
+		c.String(consts.StatusBadRequest, "post request fail due to wrong type")
 		return
 	}
 
 	fmt.Println(jsonData)
 
-	responseFromRPC, err := makeThriftCall(IDLPATH, "call", jsonData, requestURL, ctx)
+	responseFromRPC, err := thriftsend(IDLPATH, "call", jsonData, requestURL, ctx)
 
 	if err != nil {
 		fmt.Println(err)
-		c.String(consts.StatusBadRequest, "error in thrift call ")
+		c.String(consts.StatusBadRequest, "thrift call failed")
 		return
 	}
 
-	fmt.Println("Post request successful")
+	fmt.Println("Success")
 
 	c.JSON(consts.StatusOK, responseFromRPC)
 }
 
-func makeThriftCall(IDLPath string, service string, jsonData map[string]interface{}, requestURL string, ctx context.Context) (interface{}, error) {
+func thriftsend(IDLPath string, service string, jsonData map[string]interface{}, requestURL string, ctx context.Context) (interface{}, error) {
 	p, err := generic.NewThriftFileProvider(IDLPath)
 	if err != nil {
-		fmt.Println("error creating thrift file provider")
+		fmt.Println("thrift file could not be created")
 		return 0, err
 	}
 
 	g, err := generic.JSONThriftGeneric(p)
 	if err != nil {
-		return 0, errors.New(("error creating thrift generic"))
+		return 0, errors.New(("error in generic call"))
 	}
 
 	r, err := etcd.NewEtcdResolver([]string{"127.0.0.1:2379"})
@@ -72,7 +71,7 @@ func makeThriftCall(IDLPath string, service string, jsonData map[string]interfac
 	cli, err := genericclient.NewClient(service, g, client.WithResolver(r), client.WithLoadBalancer(loadbalance.NewWeightedRoundRobinBalancer()))
 
 	if err != nil {
-		return 0, errors.New(("invalid client name"))
+		return 0, errors.New(("client name wrong"))
 	}
 
 	jsonString, _ := json.Marshal(jsonData)
@@ -80,26 +79,23 @@ func makeThriftCall(IDLPath string, service string, jsonData map[string]interfac
 	resp, err := cli.GenericCall(ctx, service, string(jsonString))
 
 	if err != nil {
-		fmt.Println("error making generic call")
+		fmt.Println("generic call failed")
 		return 0, err
 	}
 
 	respString, ok := resp.(string)
-	if !ok {
-		fmt.Println("resp is not a string. Actual value:", resp)
-		return nil, errors.New("resp is not a string")
-	}
 
-	fmt.Println("generic call successful:", respString)
+	if ok == false {
+		fmt.Println("error in string")
+	}
 
 	var respData map[string]interface{}
 	err = json.Unmarshal([]byte(respString), &respData)
+
 	if err != nil {
-		fmt.Println("error unmarshalling response", err)
+		fmt.Println("error", err)
 		return nil, err
 	}
-
-	fmt.Println("response:", respData["message"])
 
 	return respData, nil
 }

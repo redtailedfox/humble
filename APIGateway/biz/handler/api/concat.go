@@ -19,28 +19,27 @@ func Concat(ctx context.Context, c *app.RequestContext) {
 	var IDLPATH string = "idl/concat.thrift"
 	var jsonData map[string]interface{}
 
-	//return data in bytes
 	response := c.GetRawData()
 
 	err := json.Unmarshal(response, &jsonData)
 
 	if err != nil {
 		fmt.Println("Error", err)
-		c.String(consts.StatusBadRequest, "bad post request")
+		c.String(consts.StatusBadRequest, "post request fail due to wrong type")
 		return
 	}
 
 	fmt.Println(jsonData)
 
-	responseFromRPC, err := makeThriftCall(IDLPATH, "concat", jsonData, requestURL, ctx)
+	responseFromRPC, err := thriftsend(IDLPATH, "concat", jsonData, requestURL, ctx)
 
 	if err != nil {
 		fmt.Println(err)
-		c.String(consts.StatusBadRequest, "error in thrift call ")
+		c.String(consts.StatusBadRequest, "thrift call failed")
 		return
 	}
 
-	fmt.Println("Post request successful")
+	fmt.Println("Success")
 
 	c.JSON(consts.StatusOK, responseFromRPC)
 }
