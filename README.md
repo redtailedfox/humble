@@ -4,8 +4,8 @@ This document guides you through the installation of required dependencies, proj
 ## Prerequisites
 To work with Humble API Gateway, you need to install Go and Etcd. Follow the instructions below to install these prerequisites.
 
-### Go Installation
-## Mac Users:
+## Go Installation
+### Mac Users:
 1. Download the Go binary from the official Go [download page](https://go.dev/doc/install).
 2. Open the package file you downloaded and follow the prompts to install Go.
    The package installs the Go distribution to /usr/local/go. The package should put the /usr/local/go/bin directory in your PATH environment variable. You may need to restart any open Terminal sessions for the change to take effect.
@@ -15,7 +15,7 @@ To work with Humble API Gateway, you need to install Go and Etcd. Follow the ins
 
 Confirm that the command prints the installed version of Go.
 
-## Windows users:
+### Windows users:
 1. Download the Go binary from the official Go [download page](https://go.dev/doc/install).
 2. Open the MSI file you downloaded and follow the prompts to install Go.
    By default, the installer will install Go to Program Files or Program Files (x86). You can change the location as needed. After installing, you will need to close and reopen any open command prompts so that changes to the environment made by the installer are reflected at the command prompt.
@@ -26,8 +26,8 @@ Confirm that the command prints the installed version of Go.
    $ go version
 
 
-### Etcd Installation
-## Windows Users:
+## Etcd Installation
+### Windows Users:
 The easiest way to install etcd on Windows is through Docker. Docker allows you to run applications in containers, which are like lightweight virtual machines. Here's a step-by-step guide to get etcd running on your Windows machine:
 Install Docker Desktop for Windows: You can download it from the official Docker website. Once you've downloaded the installer, run it and follow the instructions to install Docker Desktop. After installation, you should be able to run Docker commands in the Windows Command Prompt or PowerShell.
 Pull the etcd Docker image: Open Command Prompt or PowerShell and pull the official etcd image from Docker Hub by running:
@@ -40,13 +40,13 @@ docker run -p 2379:2379 -p 2380:2380 gcr.io/etcd-development/etcd:v3.5.0 /usr/lo
 This command starts a Docker container running etcd, and maps the container's ports 2379 and 2380 to the same ports on your host machine, so you can connect to etcd at localhost:2379.
 
 
-##Mac Users:
+### Mac Users:
 Run the following command in the terminal:
 brew install etcd
 
-### Setting up Humble
+## Setting up Humble
 
-## Mac Users:
+### Mac Users:
 1. Clone the project from GitHub:
    shell
    git clone https://github.com/redtailedfox/humble.git
@@ -60,7 +60,7 @@ brew install etcd
    ./start-all.sh
 6. The gateway is now running and you may now use our following services.
 
-## Windows Users:
+### Windows Users:
 1. Clone the project from GitHub:
    shell
    git clone https://github.com/redtailedfox/humble.git
@@ -76,10 +76,10 @@ brew install etcd
 
 
 
-### Using the services
+## Using the services
 You can test the different methods of Humble using curl commands as follows:
 
-## Mac Users:
+### Mac Users:
 1. The call method: This method echoes the message sent into the gateway and adds a Hello before it.
    shell
    curl --location --request POST 'http://127.0.0.1:8080/post' \
@@ -108,7 +108,7 @@ curl --location --request POST 'http://127.0.0.1:8080/decrypt' \
 Please replace "Arbitrary Name or Value" with your own content before running these commands.
 
 
-## Windows Users:
+### Windows Users:
 1. The call method: This method echoes the message sent into the gateway and adds a Hello before it.
    shell
    Invoke-RestMethod -Uri 'http://127.0.0.1:8080/concat' -Method POST -Headers @{"Content-Type" = "application/json"} -Body '{"message": "Arbitrary Name or Value"}'

@@ -14,12 +14,13 @@ import (
 	"github.com/cloudwego/kitex/server/genericserver"
 	etcd "github.com/kitex-contrib/registry-etcd"
 	"io"
+	"io/ioutil"
 	"net"
+	"os"
+	"strconv"
 )
 
 func main() {
-	// Parse IDL with Local Files
-	// YOUR_IDL_PATH thrift file path,eg: ./idl/example.thrift
 	p, err := generic.NewThriftFileProvider("idl/encrypt.thrift")
 	if err != nil {
 		panic(err)
@@ -32,33 +33,42 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8894))
+	filename := "counter.txt"
+
+	// Read the current value from the file
+	data, err := ioutil.ReadFile(filename)
+	if err != nil && !os.IsNotExist(err) {
+		fmt.Println("Error reading the counter:", err)
+		return
+	}
+
+	// Parse the current value
+	var i int
+	if len(data) > 0 {
+		i, err = strconv.Atoi(string(data))
+		if err != nil {
+			fmt.Println("Error parsing the counter:", err)
+			return
+		}
+	}
+	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8894+i))
+	// Increment the counter
+	i++
+	i %= 3
+
+	// Write the new value back to the file
+	err = ioutil.WriteFile(filename, []byte(strconv.Itoa(i)), 0644)
+	if err != nil {
+		fmt.Println("Error writing the counter:", err)
+		return
+	}
+
 	svr := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr), server.WithRegistry(r))
 	if err != nil {
 		panic(err)
 	}
 
 	err = svr.Run()
-	if err != nil {
-		panic(err)
-	}
-	addr2, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8895))
-	svr2 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr2), server.WithRegistry(r))
-	if err != nil {
-		panic(err)
-	}
-
-	err = svr2.Run()
-	if err != nil {
-		panic(err)
-	}
-	addr3, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8896))
-	svr3 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr3), server.WithRegistry(r))
-	if err != nil {
-		panic(err)
-	}
-
-	err = svr3.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +93,6 @@ func encrypt(stringToEncrypt string, key []byte) (string, error) {
 
 	stream := cipher.NewCFBEncrypter(block, iv)
 	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
-
 	return base64.URLEncoding.EncodeToString(ciphertext), nil
 }
 

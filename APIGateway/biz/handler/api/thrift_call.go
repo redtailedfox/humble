@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/cloudwego/kitex/pkg/loadbalance"
 	"log"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -68,7 +69,7 @@ func makeThriftCall(IDLPath string, service string, jsonData map[string]interfac
 		log.Fatal(err)
 	}
 
-	cli, err := genericclient.NewClient(service, g, client.WithResolver(r))
+	cli, err := genericclient.NewClient(service, g, client.WithResolver(r), client.WithLoadBalancer(loadbalance.NewWeightedRoundRobinBalancer()))
 
 	if err != nil {
 		return 0, errors.New(("invalid client name"))

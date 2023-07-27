@@ -41,26 +41,26 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	addr2, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8898))
-	svr2 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "decrypt"}), server.WithServiceAddr(addr2), server.WithRegistry(r))
-	if err != nil {
-		panic(err)
-	}
-
-	err = svr2.Run()
-	if err != nil {
-		panic(err)
-	}
-	addr3, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8899))
-	svr3 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "decrypt"}), server.WithServiceAddr(addr3), server.WithRegistry(r))
-	if err != nil {
-		panic(err)
-	}
-
-	err = svr3.Run()
-	if err != nil {
-		panic(err)
-	}
+	//addr2, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8898))
+	//svr2 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "decrypt"}), server.WithServiceAddr(addr2), server.WithRegistry(r))
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//err = svr2.Run()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//addr3, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8899))
+	//svr3 := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "decrypt"}), server.WithServiceAddr(addr3), server.WithRegistry(r))
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//err = svr3.Run()
+	//if err != nil {
+	//	panic(err)
+	//}
 }
 
 type GenericServiceImpl struct {

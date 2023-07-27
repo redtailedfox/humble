@@ -11,7 +11,7 @@ subdirs=("APIGateway" "RPCconcat" "RPCdecrypt" "RPCencrypt" "RPCServer")
 # iterate over subdirectories and start each main function in the background
 for dir in ${subdirs[@]}; do
     echo "Starting $dir"
-    (cd $dir && go run .) &
+    (cd $dir && go mod tidy && go run .) &
 done
 
 # wait for all background processes to finish
