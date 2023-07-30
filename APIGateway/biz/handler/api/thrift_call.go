@@ -16,6 +16,7 @@ import (
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/generic"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	constants "hello/constants"
 )
 
 // Call .
@@ -63,7 +64,7 @@ func thriftsend(IDLPath string, service string, jsonData map[string]interface{},
 		return 0, errors.New(("error in generic call"))
 	}
 
-	r, err := etcd.NewEtcdResolver([]string{"127.0.0.1:2379"})
+	r, err := etcd.NewEtcdResolver([]string{constants.EtcdAddr})
 	if err != nil {
 		log.Fatal(err)
 	}

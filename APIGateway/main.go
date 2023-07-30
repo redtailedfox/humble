@@ -4,10 +4,11 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
+	consts "hello/constants"
 )
 
 func main() {
-	h := server.Default(server.WithHostPorts(":8080"))
+	h := server.Default(server.WithHostPorts(consts.RouterAddr))
 
 	register(h)
 	h.Spin()

@@ -19,5 +19,5 @@ const (
 	Decrypt = 8897
 
 	// router address
-	RouterAddr = ":8080"
+	RouterAddr = "::8080"
 )

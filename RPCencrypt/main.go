@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	consts "encrypt/constants"
 	"fmt"
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -14,10 +15,8 @@ import (
 	"github.com/cloudwego/kitex/server/genericserver"
 	etcd "github.com/kitex-contrib/registry-etcd"
 	"io"
-	"io/ioutil"
+	"log"
 	"net"
-	"os"
-	"strconv"
 )
 
 func main() {
@@ -29,52 +28,47 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	r, err := etcd.NewEtcdRegistry([]string{"127.0.0.1:2379"}) // r should not be reused.
+	r, err := etcd.NewEtcdRegistry([]string{consts.EtcdAddr}) // r should not be reused.
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to create etcd registry: %v", err)
 	}
-	filename := "counter.txt"
+	servers := make([]server.Server, consts.NumServers)
 
-	// Read the current value from the file
-	data, err := ioutil.ReadFile(filename)
-	if err != nil && !os.IsNotExist(err) {
-		fmt.Println("Error reading the counter:", err)
-		return
-	}
-
-	// Parse the current value
-	var i int
-	if len(data) > 0 {
-		i, err = strconv.Atoi(string(data))
+	for i := 0; i < consts.NumServers; i++ {
+		addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", consts.Encrypt+i))
 		if err != nil {
-			fmt.Println("Error parsing the counter:", err)
-			return
+			log.Fatalf("Failed to resolve server address: %v", err)
 		}
-	}
-	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8894+i))
-	// Increment the counter
-	i++
-	i %= 3
 
-	// Write the new value back to the file
-	err = ioutil.WriteFile(filename, []byte(strconv.Itoa(i)), 0644)
-	if err != nil {
-		fmt.Println("Error writing the counter:", err)
-		return
-	}
+		impl := &GenericServiceImpl{ServerName: fmt.Sprintf("encrypt%d", i)}
+		svr := genericserver.NewServer(
+			impl,
+			g,
+			server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}),
+			server.WithServiceAddr(addr),
+			server.WithRegistry(r),
+		)
 
-	svr := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "encrypt"}), server.WithServiceAddr(addr), server.WithRegistry(r))
-	if err != nil {
-		panic(err)
-	}
+		if err != nil {
+			panic(err)
+		}
 
-	err = svr.Run()
-	if err != nil {
-		panic(err)
+		servers[i] = svr
 	}
+	// Start all the servers
+	for i := 0; i < consts.NumServers; i++ {
+		go func(svr server.Server) {
+			err := svr.Run()
+			if err != nil {
+				log.Fatalf("Failed to start server: %v", err)
+			}
+		}(servers[i])
+	}
+	select {}
 }
 
 type GenericServiceImpl struct {
+	ServerName string
 }
 
 func encrypt(stringToEncrypt string, key []byte) (string, error) {

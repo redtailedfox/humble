@@ -9,7 +9,8 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	consts "github.com/redtailedfox/humble/constants"
+	consts "hello/constants"
+	"log"
 	"net"
 )
 
@@ -24,20 +25,43 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	r, err := etcd.NewEtcdRegistry([]string{consts.etcdAddr}) // r should not be reused.
+	r, err := etcd.NewEtcdRegistry([]string{consts.EtcdAddr}) // r should not be reused.
 	if err != nil {
 		panic(err)
 	}
-	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", 8888))
-	svr := genericserver.NewServer(new(GenericServiceImpl), g, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "call"}), server.WithServiceAddr(addr), server.WithRegistry(r))
-	if err != nil {
-		panic(err)
+	servers := make([]server.Server, consts.NumServers)
+
+	for i := 0; i < consts.NumServers; i++ {
+		addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", consts.ServerAddr+i))
+		if err != nil {
+			log.Fatalf("Failed to resolve server address: %v", err)
+		}
+
+		svr := genericserver.NewServer(
+			new(GenericServiceImpl),
+			g,
+			server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "call"}),
+			server.WithServiceAddr(addr),
+			server.WithRegistry(r),
+		)
+
+		if err != nil {
+			panic(err)
+		}
+
+		servers[i] = svr
 	}
 
-	err = svr.Run()
-	if err != nil {
-		panic(err)
+	// Start all the servers
+	for i := 0; i < consts.NumServers; i++ {
+		go func(svr server.Server) {
+			err := svr.Run()
+			if err != nil {
+				log.Fatalf("Failed to start server: %v", err)
+			}
+		}(servers[i])
 	}
+	select {}
 }
 
 type GenericServiceImpl struct {

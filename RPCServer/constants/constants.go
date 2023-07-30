@@ -2,22 +2,22 @@ package constants
 
 const (
 	//etcd address
-	etcdAddr = "127.0.0.1:2379"
+	EtcdAddr = "127.0.0.1:2379"
 	//number of servers per service
-	numServer = 3
+	NumServers = 3
 
 	// server address
-	serverAddr = 8888
+	ServerAddr = 8888
 
 	// concat address
-	concat = 8891
+	Concat = 8891
 
 	// encrypt address
-	encrypt = 8894
+	Encrypt = 8894
 
 	// decrypt address
-	decrypt = 8897
+	Decrypt = 8897
 
 	// router address
-	routerAddr = "::8080"
+	RouterAddr = "::8080"
 )
