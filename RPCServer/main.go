@@ -9,6 +9,7 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
 	etcd "github.com/kitex-contrib/registry-etcd"
+	consts "github.com/redtailedfox/humble/constants"
 	"net"
 )
 
@@ -23,7 +24,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	r, err := etcd.NewEtcdRegistry([]string{"127.0.0.1:2379"}) // r should not be reused.
+	r, err := etcd.NewEtcdRegistry([]string{consts.etcdAddr}) // r should not be reused.
 	if err != nil {
 		panic(err)
 	}
